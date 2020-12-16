@@ -27,6 +27,7 @@
         "bootstrap-icons": "^1.2.1",
         "vform": "^1.0.1",
         "vue-router": "^3.4.9",
-        "vue-snotify": "^3.2.1"
+        "vue-snotify": "^3.2.1",
+        "vue2-dropzone": "^3.6.0"
     }
 }

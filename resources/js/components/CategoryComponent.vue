@@ -3,7 +3,7 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">Category
+                    <div class="card-header">Category List
                         <span class="float-md-right">
                          <button class="btn btn-success" @click="create">
                              <i class="fa fa-plus"></i>&nbsp;&nbsp;Add Category</button>
@@ -234,7 +234,7 @@
                         ]
                     }
                 );
-            },changeStatus:function (id) {
+            }, changeStatus: function (id) {
                 this.$snotify.clear();
                 this.$snotify.confirm(
                     "Are you sure Change Status.?",

@@ -7,17 +7,17 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter);
 
 
-import { Form, HasError, AlertError} from 'vform'
+import {Form, HasError, AlertError} from 'vform'
 
 import Snotify, { SnotifyPosition } from 'vue-snotify'
 
-const options  = {
+const options = {
     toast: {
         position: SnotifyPosition.rightTop
     }
 }
 
-Vue.use(Snotify, options )
+Vue.use(Snotify, options)
 
 window.Form = Form
 
@@ -30,6 +30,8 @@ Vue.component('pagination', require('./components/partial/PaginationComponent.vu
 //Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 const dashboard = Vue.component('dashboard-component', require('./components/DashboardComponent.vue').default);
 const category = Vue.component('category-component', require('./components/CategoryComponent.vue').default);
+const post = Vue.component('post-component', require('./components/PostComponent').default);
+const festival = Vue.component('festival-component', require('./components/FestivalComponent').default);
 
 const router = new VueRouter({
     routes: [
@@ -41,6 +43,14 @@ const router = new VueRouter({
             path: '/category',
             name: 'category',
             component: category
+        }, {
+            path: '/post',
+            name: 'post',
+            component: post
+        }, {
+            path: '/festival',
+            name: 'festival',
+            component: festival
         }
     ]
 });
