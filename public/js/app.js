@@ -2552,6 +2552,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     sendingEvent: function sendingEvent(file, xhr, formData) {
       formData.append('id', this.form.id);
+      formData.append('type', 'festival');
     },
     uploadSuccess: function uploadSuccess(file, response) {
       this.getFestival();
@@ -2643,6 +2644,10 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue2_dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue2-dropzone */ "./node_modules/vue2-dropzone/dist/vue2Dropzone.js");
+/* harmony import */ var vue2_dropzone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue2_dropzone__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue2-dropzone/dist/vue2Dropzone.min.css */ "./node_modules/vue2-dropzone/dist/vue2Dropzone.min.css");
+/* harmony import */ var vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
@@ -2718,18 +2723,106 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    vueDropzone: vue2_dropzone__WEBPACK_IMPORTED_MODULE_0___default.a
+  },
   data: function data() {
     return {
       ediMode: false,
       posts: [],
-      queryFiled: 'festival_name',
-      query: '',
+      imagemodaltitle: '',
+      listimage: [],
+      categories: [],
       form: new Form({
-        festival: ''
+        id: '',
+        category: '0'
       }),
       pagination: {
         current_page: 1
+      },
+      dropzoneOptions: {
+        url: 'images',
+        thumbnailWidth: 150,
+        thumbnailHeight: 150,
+        maxFilesize: 5000,
+        acceptedFiles: ".jpeg,.jpg,.png,.gif",
+        headers: {
+          "X-CSRF-TOKEN": document.head.querySelector("[name=csrf-token]").content
+        }
       }
     };
   },
@@ -2744,18 +2837,119 @@ __webpack_require__.r(__webpack_exports__);
     },
     reload: function reload() {
       this.getPost();
+      this.$snotify.success("Post List Refresh Successfully..!", "Success");
     },
-    store: function store() {},
-    update: function update() {},
-    getPost: function getPost() {
+    store: function store() {
       var _this = this;
 
       var self = this;
-      axios.get("posts?page=" + this.pagination.current_page).then(function (response) {
-        self.posts = response.data;
-        self.pagination = response.data;
+      this.form.busy = true;
+      this.form.post('posts').then(function (_ref) {
+        var data = _ref.data;
+
+        if (!data.error) {
+          _this.getPost();
+
+          self.form.reset();
+          self.form.clear();
+          $("#modal-post").modal('hide');
+
+          _this.$snotify.success("Post Create Successfully..!", "Success");
+        }
       })["catch"](function (e) {
-        _this.$snotify.error(e, "error");
+        self.$snotify.error(e, "error");
+      });
+    },
+    destroy: function destroy(id) {
+      var _this2 = this;
+
+      this.$snotify.clear();
+      this.$snotify.confirm("You will not be able to recover this data!", "Are you sure?", {
+        showProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        buttons: [{
+          text: "Yes",
+          action: function action(toast) {
+            _this2.$snotify.remove(toast.id);
+
+            axios["delete"]("posts/" + id).then(function (response) {
+              _this2.getPost();
+
+              _this2.$snotify.success("Post Successfully Deleted", "Success");
+            })["catch"](function (e) {
+              console.log(e);
+            });
+          },
+          bold: true
+        }, {
+          text: "No",
+          action: function action(toast) {
+            _this2.$snotify.remove(toast.id);
+          },
+          bold: true
+        }]
+      });
+    },
+    getPost: function getPost() {
+      var _this3 = this;
+
+      var self = this;
+      axios.get("posts?page=" + this.pagination.current_page).then(function (response) {
+        self.posts = response.data.post.data;
+        self.categories = response.data.category;
+        self.pagination = response.data.post;
+      })["catch"](function (e) {
+        _this3.$snotify.error(e, "error");
+      });
+    },
+    imageview: function imageview(title, lists) {
+      this.imagemodaltitle = title;
+      this.listimage = lists;
+      $('#modal-image-view').modal('show'); //console.log(lists);
+    },
+    addimage: function addimage(title, id) {
+      this.imagemodaltitle = title;
+      this.form.id = id;
+      $('#modal-upload-image').modal('show');
+    },
+    sendingEvent: function sendingEvent(file, xhr, formData) {
+      formData.append('id', this.form.id);
+      formData.append('type', 'post');
+    },
+    uploadSuccess: function uploadSuccess(file, response) {
+      this.getPost();
+      this.$snotify.success("Upload Image Successfully..!", "success");
+    },
+    changeStatus: function changeStatus(id) {
+      var _this4 = this;
+
+      this.$snotify.clear();
+      this.$snotify.confirm("Are you sure Change Status.?", {
+        showProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        buttons: [{
+          text: "Yes",
+          action: function action(toast) {
+            _this4.$snotify.remove(toast.id);
+
+            axios.get("status/posts/" + id).then(function (response) {
+              _this4.getPost();
+
+              _this4.$snotify.success("Post Status Changed Successfully.", "Success");
+            })["catch"](function (e) {
+              console.log(e);
+            });
+          },
+          bold: true
+        }, {
+          text: "No",
+          action: function action(toast) {
+            _this4.$snotify.remove(toast.id);
+          },
+          bold: true
+        }]
       });
     }
   }
@@ -41219,79 +41413,152 @@ var render = function() {
               ])
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _c("div", { staticClass: "mb-3" }, [
-                _c("div", { staticClass: "row" }, [
-                  _vm._m(0),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "col-md-3" }, [
+            _c(
+              "div",
+              { staticClass: "card-body" },
+              [
+                _c(
+                  "table",
+                  { staticClass: "table table-striped table-responsive-sm" },
+                  [
+                    _c("th", [_vm._v("#")]),
+                    _vm._v(" "),
+                    _c("th", [_vm._v("Name")]),
+                    _vm._v(" "),
+                    _c("th", [_vm._v("Date")]),
+                    _vm._v(" "),
+                    _c("th", [_vm._v("Image")]),
+                    _vm._v(" "),
+                    _c("th", [_vm._v("Action")]),
+                    _vm._v(" "),
                     _c(
-                      "select",
-                      {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.queryFiled,
-                            expression: "queryFiled"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { id: "fileds" },
-                        on: {
-                          change: function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.queryFiled = $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          }
-                        }
-                      },
+                      "tbody",
                       [
-                        _c("option", { attrs: { value: "festival_name" } }, [
-                          _vm._v("Name")
-                        ]),
+                        _vm._l(_vm.posts, function(list, index) {
+                          return _c("tr", [
+                            _c("td", [_vm._v(_vm._s(index + 1))]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(_vm._s(list.get_category["category"]))
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(list.created_at))]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-success",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.addimage(
+                                        list["get_category"]["category"],
+                                        list.id
+                                      )
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "fa fa-image" })]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-primary",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.imageview(
+                                        list["get_category"]["category"],
+                                        list["getimages"]
+                                      )
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "fa fa-file-image-o" })]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              list.status != 0
+                                ? _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-outline-success",
+                                      attrs: { type: "button" },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.changeStatus(list.id)
+                                        }
+                                      }
+                                    },
+                                    [_c("i", { staticClass: "fa fa-check" })]
+                                  )
+                                : _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-outline-danger",
+                                      attrs: { type: "button" },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.changeStatus(list.id)
+                                        }
+                                      }
+                                    },
+                                    [_c("i", { staticClass: "fa fa-ban" })]
+                                  ),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-danger",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.destroy(list.id)
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "fa fa-trash" })]
+                              )
+                            ])
+                          ])
+                        }),
                         _vm._v(" "),
-                        _c("option", { attrs: { value: "festival_date" } }, [
-                          _vm._v("Date")
-                        ])
-                      ]
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "col-md-7" }, [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.query,
-                          expression: "query"
-                        }
+                        _c(
+                          "tr",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: !_vm.posts.length,
+                                expression: "!posts.length"
+                              }
+                            ]
+                          },
+                          [_vm._m(0)]
+                        )
                       ],
-                      staticClass: "form-control",
-                      attrs: { type: "text", placeholder: "Search" },
-                      domProps: { value: _vm.query },
+                      2
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _vm.pagination.last_page > 1
+                  ? _c("pagination", {
+                      attrs: { pagination: _vm.pagination, offset: 5 },
                       on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.query = $event.target.value
+                        paginate: function($event) {
+                          return _vm.getPost()
                         }
                       }
                     })
-                  ])
-                ])
-              ])
-            ])
+                  : _vm._e()
+              ],
+              1
+            )
           ])
         ])
       ]),
@@ -41317,51 +41584,72 @@ var render = function() {
               [
                 _c("div", { staticClass: "modal-body" }, [
                   _c("div", { staticClass: "row" }, [
-                    _c("div", { staticClass: "col-6" }, [
+                    _c("div", { staticClass: "col-12" }, [
                       _c(
                         "div",
                         { staticClass: "form-group" },
                         [
-                          _c("label", { attrs: { for: "festival" } }, [
-                            _vm._v("Festival Name")
+                          _c("label", { attrs: { for: "category" } }, [
+                            _vm._v("Category")
                           ]),
                           _vm._v(" "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model.trim",
-                                value: _vm.form.festival,
-                                expression: "form.festival",
-                                modifiers: { trim: true }
-                              }
-                            ],
-                            staticClass: "form-control",
-                            class: {
-                              "is-invalid": _vm.form.errors.has("festival")
-                            },
-                            attrs: {
-                              type: "text",
-                              id: "",
-                              placeholder: "Enter Festival"
-                            },
-                            domProps: { value: _vm.form.festival },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.form.category,
+                                  expression: "form.category"
                                 }
-                                _vm.$set(
-                                  _vm.form,
-                                  "festival",
-                                  $event.target.value.trim()
-                                )
+                              ],
+                              staticClass: "form-control",
+                              class: {
+                                "is-invalid": _vm.form.errors.has("category")
                               },
-                              blur: function($event) {
-                                return _vm.$forceUpdate()
+                              attrs: { name: "category", id: "" },
+                              on: {
+                                change: function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.$set(
+                                    _vm.form,
+                                    "category",
+                                    $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  )
+                                }
                               }
-                            }
-                          }),
+                            },
+                            [
+                              _c("option", { domProps: { value: 0 } }, [
+                                _vm._v("Select Category")
+                              ]),
+                              _vm._v(" "),
+                              _vm._l(_vm.categories, function(list) {
+                                return _c(
+                                  "option",
+                                  { domProps: { value: list.id } },
+                                  [
+                                    _vm._v(
+                                      _vm._s(list.category) +
+                                        "\n                                        "
+                                    )
+                                  ]
+                                )
+                              })
+                            ],
+                            2
+                          ),
                           _vm._v(" "),
                           _c("has-error", {
                             attrs: { form: _vm.form, field: "category" }
@@ -41380,6 +41668,100 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "modal fade", attrs: { id: "modal-image-view" } },
+        [
+          _c("div", { staticClass: "modal-dialog" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c("h4", { staticClass: "modal-title" }, [
+                  _vm._v(_vm._s(_vm.imagemodaltitle))
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: {
+                      type: "button",
+                      "data-dismiss": "modal",
+                      "aria-hidden": "true"
+                    }
+                  },
+                  [_vm._v("×")]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "div",
+                  { staticClass: "row" },
+                  _vm._l(_vm.listimage, function(list, index) {
+                    return _c("div", { staticClass: "col-4 mt-2" }, [
+                      _c("img", {
+                        staticClass: "card-img",
+                        attrs: { src: "post/" + list.name, alt: "image" }
+                      })
+                    ])
+                  }),
+                  0
+                )
+              ]),
+              _vm._v(" "),
+              _vm._m(3)
+            ])
+          ])
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "modal fade", attrs: { id: "modal-upload-image" } },
+        [
+          _c("div", { staticClass: "modal-dialog" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c("h4", { staticClass: "modal-title" }, [
+                  _vm._v(_vm._s(_vm.imagemodaltitle))
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: {
+                      type: "button",
+                      "data-dismiss": "modal",
+                      "aria-hidden": "true"
+                    }
+                  },
+                  [_vm._v("×")]
+                )
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "modal-body" },
+                [
+                  _c("vue-dropzone", {
+                    ref: "myVueDropzone",
+                    attrs: { id: "dropzone", options: _vm.dropzoneOptions },
+                    on: {
+                      "vdropzone-sending": _vm.sendingEvent,
+                      "vdropzone-success": _vm.uploadSuccess
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _vm._m(4)
+            ])
+          ])
+        ]
+      ),
+      _vm._v(" "),
       _c("vue-snotify")
     ],
     1
@@ -41390,8 +41772,12 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-2" }, [
-      _c("strong", [_vm._v("Search By :")])
+    return _c("td", { attrs: { colspan: "6" } }, [
+      _c(
+        "div",
+        { staticClass: "alert alert-danger", attrs: { role: "alert" } },
+        [_vm._v("Sorry :( No data found.")]
+      )
     ])
   },
   function() {
@@ -41431,8 +41817,38 @@ var staticRenderFns = [
       _vm._v(" "),
       _c(
         "button",
-        { staticClass: "btn btn-primary", attrs: { type: "button" } },
+        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
         [_vm._v("Create Post")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-default",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Close")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-default",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Close")]
       )
     ])
   }

@@ -20,4 +20,8 @@ class Image extends Model
     {
         return $this->belongsTo('App\Models\Festival','festival_id');
     }
+    public function getPost()
+    {
+        return $this->belongsTo('App\Models\Festival','post_id');
+    }
 }

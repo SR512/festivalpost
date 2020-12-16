@@ -306,6 +306,7 @@
                 $('#modal-upload-image').modal('show')
             }, sendingEvent(file, xhr, formData) {
                 formData.append('id', this.form.id);
+                formData.append('type', 'festival');
             }, uploadSuccess: function (file, response) {
                 this.getFestival()
                 this.$snotify.success("Upload Image Successfully..!", "success")

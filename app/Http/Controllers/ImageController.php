@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Festival;
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class ImageController extends Controller
@@ -36,16 +37,24 @@ class ImageController extends Controller
     public function store(Request $request)
     {
         $imageName = time() . '.' . $request->file->getClientOriginalExtension();
-        $request->file->move(public_path('festival'), $imageName);
 
-        $uploadimage = \App\Models\Image::create([
-            'festival_id' => $request->id,
-            'name' => $imageName,
-        ]);
 
-        if($uploadimage)
-        {
-          $listimage = Festival::with('getimages')->find($request->id);
+        if ($request->type == 'festival') {
+            $request->file->move(public_path('festival'), $imageName);
+            $uploadimage = \App\Models\Image::create([
+                'festival_id' => $request->id,
+                'name' => $imageName,
+            ]);
+        } else {
+            $request->file->move(public_path('post'), $imageName);
+            $uploadimage = \App\Models\Image::create([
+                'post_id' => $request->id,
+                'name' => $imageName,
+            ]);
+        }
+
+        if ($uploadimage) {
+            $listimage = Post::with('getimages')->find($request->id);
         }
 
         return response()->json(['success' => 'You have successfully upload file.']);

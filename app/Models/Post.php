@@ -10,6 +10,16 @@ class Post extends Model
     use HasFactory;
     protected $table="posts";
     protected $fillable=[
-        'category_id'
+        'category'
     ];
+
+    public function getCategory()
+    {
+        return $this->belongsTo('App\Models\Category','category');
+    }
+
+    public function getimages()
+    {
+        return $this->hasMany('App\Models\Image');
+    }
 }

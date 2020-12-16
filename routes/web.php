@@ -28,7 +28,7 @@ Route::get('status/categories/{id}',[App\Http\Controllers\CategoryController::cl
 
 
 Route::resource('posts',\App\Http\Controllers\PostController::class);
-
+Route::get('status/posts/{id}',[App\Http\Controllers\PostController::class, 'changeStatus']);
 
 Route::resource('festivals',\App\Http\Controllers\FestivalController::class);
 Route::get('festivallist',[App\Http\Controllers\FestivalController::class, 'getFestival']);
