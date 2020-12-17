@@ -48,6 +48,9 @@
                             <li class="nav-item">
                                 <router-link :to="{ name: 'festival' }" class="nav-link">Festival</router-link>
                             </li>
+                            <li class="nav-item">
+                                <router-link :to="{ name: 'custom-category' }" class="nav-link">Custom Category</router-link>
+                            </li>
                         </ul>
                 @endif
 

@@ -36,3 +36,9 @@ Route::get('search/festivals/{field}/{query}',[App\Http\Controllers\FestivalCont
 Route::get('status/festivals/{id}',[App\Http\Controllers\FestivalController::class, 'changeStatus']);
 
 Route::resource('images',\App\Http\Controllers\ImageController::class);
+
+
+
+Route::resource('customcategories',\App\Http\Controllers\CustomCategoryController::class);
+Route::get('search/customcategories/{field}/{query}',[App\Http\Controllers\CustomCategoryController::class, 'search']);
+Route::get('status/customcategories/{id}',[App\Http\Controllers\CustomCategoryController::class, 'changeStatus']);

@@ -30,6 +30,7 @@ Vue.component('pagination', require('./components/partial/PaginationComponent.vu
 //Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 const dashboard = Vue.component('dashboard-component', require('./components/DashboardComponent.vue').default);
 const category = Vue.component('category-component', require('./components/CategoryComponent.vue').default);
+const customcategory = Vue.component('custom-category-component', require('./components/CustomCategoryComponent.vue').default);
 const post = Vue.component('post-component', require('./components/PostComponent').default);
 const festival = Vue.component('festival-component', require('./components/FestivalComponent').default);
 
@@ -43,6 +44,10 @@ const router = new VueRouter({
             path: '/category',
             name: 'category',
             component: category
+        },{
+            path: '/custom-category',
+            name: 'custom-category',
+            component: customcategory
         }, {
             path: '/post',
             name: 'post',
