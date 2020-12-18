@@ -5,10 +5,10 @@
                 <div class="card">
                     <div class="card-header">Custom Category List
                         <span class="float-md-right">
-                         <button class="btn btn-success" @click="create">
-                             <i class="fa fa-plus"></i>&nbsp;&nbsp;Add Custom Category</button>
-                         <button class="btn btn-primary" @click="reload"><i
-                             class="fa fa-refresh"></i>&nbsp;&nbsp;Reload</button>
+                             <button class="btn btn-success" @click="create">
+                                 <i class="fa fa-plus"></i>&nbsp;&nbsp;Add Custom Category</button>
+                             <button class="btn btn-primary" @click="reload"><i
+                                 class="fa fa-refresh"></i>&nbsp;&nbsp;Reload</button>
                      </span>
                     </div>
 
@@ -32,12 +32,22 @@
                             <th>#</th>
                             <th>Name</th>
                             <th>Date</th>
+                            <th>Image</th>
                             <th>Action</th>
                             <tbody>
                             <tr v-for="(list,index) in categories">
                                 <td>{{index + 1}}</td>
                                 <td>{{list.category}}</td>
                                 <td>{{list.created_at}}</td>
+                                <td>
+                                    <button type="button" class="btn btn-success"
+                                            @click="addimage(list.category,list.id)"><i
+                                        class="fa fa-image"></i></button>
+
+                                    <button type="button" class="btn btn-primary"
+                                            @click="imageview(list.category,list['get_images'])"><i
+                                        class="fa fa-file-image-o"></i></button>
+                                </td>
                                 <td>
                                     <button type="button" v-if="list.status != 0 " class="btn btn-outline-success"><i
                                         class="fa fa-check" @click="changeStatus(list.id)"></i></button>
@@ -93,23 +103,130 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
+        <!--Custom Image Modal-->
+
+        <div class="modal fade" id="modal-custom-image">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ customimgtitle }} Add Custom Image</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <form @submit.prevent="uploadimg()" @keydown="form_img.onKeydown($event)"
+                          enctype="multipart/form-data">
+                        <div class="modal-body">
+
+                            <div class="form-group">
+                                <label for="position_x">Position X</label>
+                                <input type="number" class="form-control"
+                                       :class="{ 'is-invalid': form_img.errors.has('position_x') }"
+                                       v-model.trim="form_img.position_x"
+                                       id="" placeholder="Position X">
+                                <has-error :form="form_img" field="position_x"></has-error>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="position_y">Position Y</label>
+                                <input type="number" class="form-control"
+                                       :class="{ 'is-invalid': form_img.errors.has('position_y') }"
+                                       v-model.trim="form_img.position_y"
+                                       id="" placeholder="Position Y">
+                                <has-error :form="form_img" field="position_y"></has-error>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="">Image Position X</label>
+                                <input type="number" class="form-control"
+                                       :class="{ 'is-invalid': form_img.errors.has('imgposition_x') }"
+                                       v-model.trim="form_img.imgposition_x"
+                                       id="" placeholder="Image Position X">
+                                <has-error :form="form_img" field="imgposition_x"></has-error>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="">Image Position Y</label>
+                                <input type="number" class="form-control"
+                                       :class="{ 'is-invalid': form_img.errors.has('imgposition_y') }"
+                                       v-model.trim="form_img.imgposition_y"
+                                       id="" placeholder="Image Position Y">
+                                <has-error :form="form_img" field="imgposition_y"></has-error>
+                            </div>
+
+                            <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions"
+                                          v-on:vdropzone-sending="sendingEvent"
+                                          v-on:vdropzone-success="uploadSuccess"></vue-dropzone>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <!--Image View Modal-->
+        <div class="modal fade" id="modal-image-view">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{customimgtitle}}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-4 mt-2" v-for="(list,index) in listimage">
+                                <img :src="'custom-post/'+list.image_one" alt="image" class="card-img"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
         <vue-snotify></vue-snotify>
     </div>
 </template>
 
 <script>
+    import vue2Dropzone from 'vue2-dropzone'
+    import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+
     export default {
+        components: {
+            vueDropzone: vue2Dropzone
+        },
         data() {
             return {
                 editMode: false,
                 categories: [],
                 queryFiled: 'category',
                 query: '',
+                listimage: [],
+                customimgtitle: '',
                 form: new Form({
                     id: '',
                     category: ''
+                }),
+                form_img: new Form({
+                    id: '',
+                    image_one: '',
+                    position_x: '',
+                    position_y: '',
+                    imgposition_x: '',
+                    imgposition_y: ''
                 }), pagination: {
                     current_page: 1
+                }, dropzoneOptions: {
+                    url: 'customimages',
+                    thumbnailWidth: 150,
+                    thumbnailHeight: 150,
+                    maxFilesize: 5000,
+                    acceptedFiles: ".jpeg,.jpg,.png,.gif",
+                    headers: {
+                        "X-CSRF-TOKEN": document.head.querySelector("[name=csrf-token]").content
+                    }
                 }
             }
         },
@@ -126,6 +243,18 @@
                 }
             }
         }, methods: {
+            sendingEvent(file, xhr, formData) {
+                formData.append('id', this.form_img.id);
+                formData.append('position_x', this.form_img.position_x);
+                formData.append('position_y', this.form_img.position_y);
+                formData.append('imgposition_x', this.form_img.imgposition_x);
+                formData.append('imgposition_y', this.form_img.imgposition_y);
+
+            }, uploadSuccess: function (file, response) {
+                this.getCategory()
+                $("#modal-custom-image").modal('hide');
+                this.$snotify.success("Upload Image Successfully..!", "success")
+            },
             getCategory: function () {
                 var self = this
                 axios.get("customcategories?page=" + this.pagination.current_page).then(function (response) {
@@ -270,6 +399,16 @@
                         ]
                     }
                 );
+            }, addimage: function (name, id) {
+                this.form_img.id = id
+                this.customimgtitle = name
+                $("#modal-custom-image").modal('show');
+
+            }, imageview(title, lists) {
+                this.customimgtitle = title
+                this.listimage = lists;
+                $('#modal-image-view').modal('show');
+                //console.log(lists);
             }
         }
     }

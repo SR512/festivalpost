@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\CustomCategory;
+use App\Models\CustomImage;
 use App\Models\Festival;
 use App\Models\Post;
 use Carbon\Carbon;
@@ -200,6 +202,55 @@ class FestivalController extends Controller
                 \App\Models\Image::create([
                     'festival_id' => $festival->id,
                     'name' => basename($list['fest_image']),
+                ]);
+            }
+        }
+
+        return $response;
+    }
+
+    public function getcustomcategorypost()
+    {
+        $cateid = null;
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Authkey' => 'stock@123',
+            'Accept-Encoding' => 'application/gzip',
+        ])->get('http://festivalpost.in/admin/api/userapi/v2/getcustomcategorypost');
+
+
+        foreach ($response['data'] as $list) {
+
+            $isCustomCategory = CustomCategory::where('category', $list['name'])->first();
+
+            if ($isCustomCategory != null) {
+                $cateid = $isCustomCategory->id;
+            } else {
+                $category = CustomCategory::create([
+                    'category' => $list['name']
+                ]);
+                $cateid = $category->id;
+            }
+
+            foreach ($list['catdata'] as $listdata)
+            {
+                $filename = public_path('/custom-post/' . basename($listdata['images']['image_one']));
+                Image::make($listdata['images']['image_one'])->save($filename);
+
+                $data = getimagesize($listdata['images']['image_one']);
+                $width = $data[0];
+                $height = $data[1];
+
+                CustomImage::create([
+                    'custom_category_id' => $cateid,
+                    'image_one' => basename($listdata['images']['image_one']),
+                    'position_x' => $listdata['images']['position_x'],
+                    'position_y' => $listdata['images']['position_y'],
+                    'imgposition_x' => $listdata['images']['img_position_x'],
+                    'imgposition_y' => $listdata['images']['img_position_y'],
+                    'width' => $width,
+                    'height' => $height,
                 ]);
             }
         }

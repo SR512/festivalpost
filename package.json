@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "bootstrap-icons": "^1.2.1",
+        "object-to-formdata": "^4.1.0",
         "vform": "^1.0.1",
         "vue-router": "^3.4.9",
         "vue-snotify": "^3.2.1",

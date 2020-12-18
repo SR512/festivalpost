@@ -15,7 +15,8 @@ class CustomCategoryController extends Controller
      */
     public function index()
     {
-        $categories = CustomCategory::orderBy('id', 'DESC')->paginate(10);
+        $categories = CustomCategory::with('getImages')->orderBy('id', 'DESC')->paginate(10);
+
         return response()->json($categories);
     }
 

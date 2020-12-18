@@ -14,4 +14,8 @@ class CustomCategory extends Model
         'category',
         'status'
     ];
+
+    public function getImages(){
+        return $this->hasMany('App\Models\CustomImage');
+    }
 }

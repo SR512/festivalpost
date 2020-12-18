@@ -8,6 +8,7 @@ Vue.use(VueRouter);
 
 
 import {Form, HasError, AlertError} from 'vform'
+import objectToFormData from 'object-to-formdata'
 
 import Snotify, { SnotifyPosition } from 'vue-snotify'
 
@@ -20,6 +21,8 @@ const options = {
 Vue.use(Snotify, options)
 
 window.Form = Form
+
+window.objectToFormData = objectToFormData;
 
 // Component Register
 Vue.component(HasError.name, HasError)

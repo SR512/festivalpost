@@ -2197,6 +2197,10 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue2_dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue2-dropzone */ "./node_modules/vue2-dropzone/dist/vue2Dropzone.js");
+/* harmony import */ var vue2_dropzone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue2_dropzone__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue2-dropzone/dist/vue2Dropzone.min.css */ "./node_modules/vue2-dropzone/dist/vue2Dropzone.min.css");
+/* harmony import */ var vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
@@ -2296,19 +2300,136 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    vueDropzone: vue2_dropzone__WEBPACK_IMPORTED_MODULE_0___default.a
+  },
   data: function data() {
     return {
       editMode: false,
       categories: [],
       queryFiled: 'category',
       query: '',
+      listimage: [],
+      customimgtitle: '',
       form: new Form({
         id: '',
         category: ''
       }),
+      form_img: new Form({
+        id: '',
+        image_one: '',
+        position_x: '',
+        position_y: '',
+        imgposition_x: '',
+        imgposition_y: ''
+      }),
       pagination: {
         current_page: 1
+      },
+      dropzoneOptions: {
+        url: 'customimages',
+        thumbnailWidth: 150,
+        thumbnailHeight: 150,
+        maxFilesize: 5000,
+        acceptedFiles: ".jpeg,.jpg,.png,.gif",
+        headers: {
+          "X-CSRF-TOKEN": document.head.querySelector("[name=csrf-token]").content
+        }
       }
     };
   },
@@ -2327,6 +2448,18 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    sendingEvent: function sendingEvent(file, xhr, formData) {
+      formData.append('id', this.form_img.id);
+      formData.append('position_x', this.form_img.position_x);
+      formData.append('position_y', this.form_img.position_y);
+      formData.append('imgposition_x', this.form_img.imgposition_x);
+      formData.append('imgposition_y', this.form_img.imgposition_y);
+    },
+    uploadSuccess: function uploadSuccess(file, response) {
+      this.getCategory();
+      $("#modal-custom-image").modal('hide');
+      this.$snotify.success("Upload Image Successfully..!", "success");
+    },
     getCategory: function getCategory() {
       var _this = this;
 
@@ -2471,6 +2604,16 @@ __webpack_require__.r(__webpack_exports__);
           bold: true
         }]
       });
+    },
+    addimage: function addimage(name, id) {
+      this.form_img.id = id;
+      this.customimgtitle = name;
+      $("#modal-custom-image").modal('show');
+    },
+    imageview: function imageview(title, lists) {
+      this.customimgtitle = title;
+      this.listimage = lists;
+      $('#modal-image-view').modal('show'); //console.log(lists);
     }
   }
 });
@@ -35906,6 +36049,108 @@ return jQuery;
 
 /***/ }),
 
+/***/ "./node_modules/object-to-formdata/dist/index.module.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/object-to-formdata/dist/index.module.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+const isUndefined = (value) => value === undefined;
+
+const isNull = (value) => value === null;
+
+const isBoolean = (value) => typeof value === 'boolean';
+
+const isObject = (value) => value === Object(value);
+
+const isArray = (value) => Array.isArray(value);
+
+const isDate = (value) => value instanceof Date;
+
+const isBlob = (value) =>
+  value &&
+  typeof value.size === 'number' &&
+  typeof value.type === 'string' &&
+  typeof value.slice === 'function';
+
+const isFile = (value) =>
+  isBlob(value) &&
+  typeof value.name === 'string' &&
+  (typeof value.lastModifiedDate === 'object' ||
+    typeof value.lastModified === 'number');
+
+const serialize = (obj, cfg, fd, pre) => {
+  cfg = cfg || {};
+
+  cfg.indices = isUndefined(cfg.indices) ? false : cfg.indices;
+
+  cfg.nullsAsUndefineds = isUndefined(cfg.nullsAsUndefineds)
+    ? false
+    : cfg.nullsAsUndefineds;
+
+  cfg.booleansAsIntegers = isUndefined(cfg.booleansAsIntegers)
+    ? false
+    : cfg.booleansAsIntegers;
+
+  cfg.allowEmptyArrays = isUndefined(cfg.allowEmptyArrays)
+    ? false
+    : cfg.allowEmptyArrays;
+
+  fd = fd || new FormData();
+
+  if (isUndefined(obj)) {
+    return fd;
+  } else if (isNull(obj)) {
+    if (!cfg.nullsAsUndefineds) {
+      fd.append(pre, '');
+    }
+  } else if (isBoolean(obj)) {
+    if (cfg.booleansAsIntegers) {
+      fd.append(pre, obj ? 1 : 0);
+    } else {
+      fd.append(pre, obj);
+    }
+  } else if (isArray(obj)) {
+    if (obj.length) {
+      obj.forEach((value, index) => {
+        const key = pre + '[' + (cfg.indices ? index : '') + ']';
+
+        serialize(value, cfg, fd, key);
+      });
+    } else if (cfg.allowEmptyArrays) {
+      fd.append(pre + '[]', '');
+    }
+  } else if (isDate(obj)) {
+    fd.append(pre, obj.toISOString());
+  } else if (isObject(obj) && !isFile(obj) && !isBlob(obj)) {
+    Object.keys(obj).forEach((prop) => {
+      const value = obj[prop];
+
+      if (isArray(value)) {
+        while (prop.length > 2 && prop.lastIndexOf('[]') === prop.length - 2) {
+          prop = prop.substring(0, prop.length - 2);
+        }
+      }
+
+      const key = pre ? pre + '[' + prop + ']' : prop;
+
+      serialize(value, cfg, fd, key);
+    });
+  } else {
+    fd.append(pre, obj);
+  }
+
+  return fd;
+};
+
+module.exports = {
+  serialize,
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/popper.js/dist/esm/popper.js":
 /*!***************************************************!*\
   !*** ./node_modules/popper.js/dist/esm/popper.js ***!
@@ -41065,6 +41310,8 @@ var render = function() {
                     _vm._v(" "),
                     _c("th", [_vm._v("Date")]),
                     _vm._v(" "),
+                    _c("th", [_vm._v("Image")]),
+                    _vm._v(" "),
                     _c("th", [_vm._v("Action")]),
                     _vm._v(" "),
                     _c(
@@ -41077,6 +41324,42 @@ var render = function() {
                             _c("td", [_vm._v(_vm._s(list.category))]),
                             _vm._v(" "),
                             _c("td", [_vm._v(_vm._s(list.created_at))]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-success",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.addimage(
+                                        list.category,
+                                        list.id
+                                      )
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "fa fa-image" })]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-primary",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.imageview(
+                                        list.category,
+                                        list["get_images"]
+                                      )
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "fa fa-file-image-o" })]
+                              )
+                            ]),
                             _vm._v(" "),
                             _c("td", [
                               list.status != 0
@@ -41310,6 +41593,342 @@ var render = function() {
         ]
       ),
       _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "modal fade", attrs: { id: "modal-custom-image" } },
+        [
+          _c("div", { staticClass: "modal-dialog" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c("h4", { staticClass: "modal-title" }, [
+                  _vm._v(_vm._s(_vm.customimgtitle) + " Add Custom Image")
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: {
+                      type: "button",
+                      "data-dismiss": "modal",
+                      "aria-hidden": "true"
+                    }
+                  },
+                  [_vm._v("×")]
+                )
+              ]),
+              _vm._v(" "),
+              _c(
+                "form",
+                {
+                  attrs: { enctype: "multipart/form-data" },
+                  on: {
+                    submit: function($event) {
+                      $event.preventDefault()
+                      return _vm.uploadimg()
+                    },
+                    keydown: function($event) {
+                      return _vm.form_img.onKeydown($event)
+                    }
+                  }
+                },
+                [
+                  _c(
+                    "div",
+                    { staticClass: "modal-body" },
+                    [
+                      _c(
+                        "div",
+                        { staticClass: "form-group" },
+                        [
+                          _c("label", { attrs: { for: "position_x" } }, [
+                            _vm._v("Position X")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model.trim",
+                                value: _vm.form_img.position_x,
+                                expression: "form_img.position_x",
+                                modifiers: { trim: true }
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: {
+                              "is-invalid": _vm.form_img.errors.has(
+                                "position_x"
+                              )
+                            },
+                            attrs: {
+                              type: "number",
+                              id: "",
+                              placeholder: "Position X"
+                            },
+                            domProps: { value: _vm.form_img.position_x },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form_img,
+                                  "position_x",
+                                  $event.target.value.trim()
+                                )
+                              },
+                              blur: function($event) {
+                                return _vm.$forceUpdate()
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("has-error", {
+                            attrs: { form: _vm.form_img, field: "position_x" }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "form-group" },
+                        [
+                          _c("label", { attrs: { for: "position_y" } }, [
+                            _vm._v("Position Y")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model.trim",
+                                value: _vm.form_img.position_y,
+                                expression: "form_img.position_y",
+                                modifiers: { trim: true }
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: {
+                              "is-invalid": _vm.form_img.errors.has(
+                                "position_y"
+                              )
+                            },
+                            attrs: {
+                              type: "number",
+                              id: "",
+                              placeholder: "Position Y"
+                            },
+                            domProps: { value: _vm.form_img.position_y },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form_img,
+                                  "position_y",
+                                  $event.target.value.trim()
+                                )
+                              },
+                              blur: function($event) {
+                                return _vm.$forceUpdate()
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("has-error", {
+                            attrs: { form: _vm.form_img, field: "position_y" }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "form-group" },
+                        [
+                          _c("label", { attrs: { for: "" } }, [
+                            _vm._v("Image Position X")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model.trim",
+                                value: _vm.form_img.imgposition_x,
+                                expression: "form_img.imgposition_x",
+                                modifiers: { trim: true }
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: {
+                              "is-invalid": _vm.form_img.errors.has(
+                                "imgposition_x"
+                              )
+                            },
+                            attrs: {
+                              type: "number",
+                              id: "",
+                              placeholder: "Image Position X"
+                            },
+                            domProps: { value: _vm.form_img.imgposition_x },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form_img,
+                                  "imgposition_x",
+                                  $event.target.value.trim()
+                                )
+                              },
+                              blur: function($event) {
+                                return _vm.$forceUpdate()
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("has-error", {
+                            attrs: {
+                              form: _vm.form_img,
+                              field: "imgposition_x"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "form-group" },
+                        [
+                          _c("label", { attrs: { for: "" } }, [
+                            _vm._v("Image Position Y")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model.trim",
+                                value: _vm.form_img.imgposition_y,
+                                expression: "form_img.imgposition_y",
+                                modifiers: { trim: true }
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: {
+                              "is-invalid": _vm.form_img.errors.has(
+                                "imgposition_y"
+                              )
+                            },
+                            attrs: {
+                              type: "number",
+                              id: "",
+                              placeholder: "Image Position Y"
+                            },
+                            domProps: { value: _vm.form_img.imgposition_y },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form_img,
+                                  "imgposition_y",
+                                  $event.target.value.trim()
+                                )
+                              },
+                              blur: function($event) {
+                                return _vm.$forceUpdate()
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("has-error", {
+                            attrs: {
+                              form: _vm.form_img,
+                              field: "imgposition_y"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("vue-dropzone", {
+                        ref: "myVueDropzone",
+                        attrs: { id: "dropzone", options: _vm.dropzoneOptions },
+                        on: {
+                          "vdropzone-sending": _vm.sendingEvent,
+                          "vdropzone-success": _vm.uploadSuccess
+                        }
+                      })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _vm._m(2)
+                ]
+              )
+            ])
+          ])
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "modal fade", attrs: { id: "modal-image-view" } },
+        [
+          _c("div", { staticClass: "modal-dialog" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c("h4", { staticClass: "modal-title" }, [
+                  _vm._v(_vm._s(_vm.customimgtitle))
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: {
+                      type: "button",
+                      "data-dismiss": "modal",
+                      "aria-hidden": "true"
+                    }
+                  },
+                  [_vm._v("×")]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "div",
+                  { staticClass: "row" },
+                  _vm._l(_vm.listimage, function(list, index) {
+                    return _c("div", { staticClass: "col-4 mt-2" }, [
+                      _c("img", {
+                        staticClass: "card-img",
+                        attrs: {
+                          src: "custom-post/" + list.image_one,
+                          alt: "image"
+                        }
+                      })
+                    ])
+                  }),
+                  0
+                )
+              ]),
+              _vm._v(" "),
+              _vm._m(3)
+            ])
+          ])
+        ]
+      ),
+      _vm._v(" "),
       _c("vue-snotify")
     ],
     1
@@ -41333,6 +41952,36 @@ var staticRenderFns = [
         "div",
         { staticClass: "alert alert-danger", attrs: { role: "alert" } },
         [_vm._v("Sorry :( No data found.")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-default",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Close")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-default",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Close")]
       )
     ])
   }
@@ -59449,7 +60098,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var vform__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vform */ "./node_modules/vform/dist/vform.common.js");
 /* harmony import */ var vform__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vform__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var vue_snotify__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-snotify */ "./node_modules/vue-snotify/vue-snotify.esm.js");
+/* harmony import */ var object_to_formdata__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! object-to-formdata */ "./node_modules/object-to-formdata/dist/index.module.js");
+/* harmony import */ var object_to_formdata__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(object_to_formdata__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var vue_snotify__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-snotify */ "./node_modules/vue-snotify/vue-snotify.esm.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
@@ -59457,13 +60108,15 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 
+
 var options = {
   toast: {
-    position: vue_snotify__WEBPACK_IMPORTED_MODULE_2__["SnotifyPosition"].rightTop
+    position: vue_snotify__WEBPACK_IMPORTED_MODULE_3__["SnotifyPosition"].rightTop
   }
 };
-Vue.use(vue_snotify__WEBPACK_IMPORTED_MODULE_2__["default"], options);
-window.Form = vform__WEBPACK_IMPORTED_MODULE_1__["Form"]; // Component Register
+Vue.use(vue_snotify__WEBPACK_IMPORTED_MODULE_3__["default"], options);
+window.Form = vform__WEBPACK_IMPORTED_MODULE_1__["Form"];
+window.objectToFormData = object_to_formdata__WEBPACK_IMPORTED_MODULE_2___default.a; // Component Register
 
 Vue.component(vform__WEBPACK_IMPORTED_MODULE_1__["HasError"].name, vform__WEBPACK_IMPORTED_MODULE_1__["HasError"]);
 Vue.component(vform__WEBPACK_IMPORTED_MODULE_1__["AlertError"].name, vform__WEBPACK_IMPORTED_MODULE_1__["AlertError"]);
