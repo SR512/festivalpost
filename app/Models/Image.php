@@ -16,12 +16,14 @@ class Image extends Model
         'name'
     ];
 
+
     public function getFestival()
     {
-        return $this->belongsTo('App\Models\Festival','festival_id');
+        return $this->belongsTo('App\Models\Festival', 'festival_id');
     }
+
     public function getPost()
     {
-        return $this->belongsTo('App\Models\Festival','post_id');
+        return $this->belongsTo('App\Models\Festival', 'post_id');
     }
 }

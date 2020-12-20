@@ -42,8 +42,8 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
-            'provider' => 'users',
+            'driver' => 'passport',
+            'model' => App\Models\AppUser::class,
             'hash' => false,
         ],
     ],

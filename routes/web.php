@@ -33,6 +33,8 @@ Route::get('status/posts/{id}',[App\Http\Controllers\PostController::class, 'cha
 Route::resource('festivals',\App\Http\Controllers\FestivalController::class);
 
 Route::get('getcustomcategorypost',[App\Http\Controllers\FestivalController::class, 'getcustomcategorypost']);
+Route::get('getCategory',[App\Http\Controllers\FestivalController::class, 'getCategory']);
+Route::get('getFestival',[App\Http\Controllers\FestivalController::class, 'getFestival']);
 
 Route::get('search/festivals/{field}/{query}',[App\Http\Controllers\FestivalController::class, 'search']);
 Route::get('status/festivals/{id}',[App\Http\Controllers\FestivalController::class, 'changeStatus']);

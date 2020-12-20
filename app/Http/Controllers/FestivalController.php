@@ -180,7 +180,7 @@ class FestivalController extends Controller
             'Authkey' => 'stock@123',
             'Accept-Encoding' => 'application/gzip',
         ])
-            ->withBody('token', '$242y%2412%24AmYh4bNA6oGJ92ZJW5YwoO5CcxaaYeqcZZJ2lugAYtWACjOomCJC6')
+            ->withBody('token', '%242y%2412%24dYmQmCPhdI1wlMet7aMTKOQrqg6TctXvL9Nv8j.IPwx2S8MFmOPS2')
             ->post('http://festivalpost.in/admin/api/userapi/v2/gethomepage');
 
 
@@ -209,6 +209,59 @@ class FestivalController extends Controller
         return $response;
     }
 
+    // Category
+    public function getCategory()
+    {
+        $cateid = null;
+        $postid = null;
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Authkey' => 'stock@123',
+            'Accept-Encoding' => 'application/gzip',
+        ])
+            ->withBody('token', '$242y%2412%24AmYh4bNA6oGJ92ZJW5YwoO5CcxaaYeqcZZJ2lugAYtWACjOomCJC6')
+            ->post('http://festivalpost.in/admin/api/userapi/v2/gethomepage');
+
+
+        foreach ($response['incidents'] as $list) {
+
+            $isCategory = Category::where('category', $list['title'])->first();
+
+            if ($isCategory != null) {
+                $cateid = $isCategory->id;
+            } else {
+                $category = Category::create([
+                    'category' => $list['title']
+                ]);
+                $cateid = $category->id;
+            }
+
+            foreach ($list['img_url'] as $listdata) {
+                $filename = public_path('/post/' . basename($listdata['post_content']));
+                Image::make($listdata['post_content'])->save($filename);
+
+                $isPost = Post::where('category', $cateid)->first();
+
+                if ($isPost != null) {
+                    $postid = $isPost->id;
+                } else {
+
+                    $post = Post::create([
+                        'category' => $cateid
+                    ]);
+                    $postid = $post->id;
+                }
+
+                \App\Models\Image::create([
+                    'post_id' => $postid,
+                    'name' => basename($listdata['post_content'])
+                ]);
+            }
+        }
+        return $response;
+    }
+
     public function getcustomcategorypost()
     {
         $cateid = null;
@@ -233,8 +286,7 @@ class FestivalController extends Controller
                 $cateid = $category->id;
             }
 
-            foreach ($list['catdata'] as $listdata)
-            {
+            foreach ($list['catdata'] as $listdata) {
                 $filename = public_path('/custom-post/' . basename($listdata['images']['image_one']));
                 Image::make($listdata['images']['image_one'])->save($filename);
 
