@@ -20,4 +20,6 @@ Route::post('login', [\App\Http\Controllers\ApiController::class,'login']);
 Route::post('logout', [\App\Http\Controllers\ApiController::class,'logout']);
 Route::post('resendotp', [\App\Http\Controllers\ApiController::class,'resendotp']);
 Route::post('getHomepage', [\App\Http\Controllers\ApiController::class,'getHomepage']);
+Route::post('getImage', [\App\Http\Controllers\ApiController::class,'getImage']);
+Route::post('getPackage', [\App\Http\Controllers\ApiController::class,'getPackage']);
 

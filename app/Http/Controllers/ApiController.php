@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\AppUser;
 use App\Models\Business;
 use App\Models\Festival;
+use App\Models\Image;
+use App\Models\Package;
 use App\Models\Post;
 use App\Models\User;
 use Carbon\Carbon;
@@ -260,6 +262,55 @@ class ApiController extends Controller
 
     }
 
+    //    Get Data From ID
+
+    public function getImage(Request $request)
+    {
+        $data = [];
+
+        if ($this->CheckToken($request['token']) && $this->checkUser($request->header('Authkey'))) {
+
+            if ($request->type == "festival") {
+                $listdata = Image::where('festival_id', $request->id)->get();
+
+            } else {
+                $listdata = Image::where('post_id', $request->id)->get();
+            }
+
+            $data['error'] = false;
+            $data['data'] = $listdata;
+
+
+        } else {
+            $data['error'] = false;
+            $data['message'] = "unauthorize user..!";
+        }
+
+        return response()->json($data, $this->successStatus);
+
+    }
+
+    //    Get Packge
+
+    public function getPackage(Request $request)
+    {
+        $data = [];
+
+        if ($this->CheckToken($request['token']) && $this->checkUser($request->header('Authkey'))) {
+
+            $packages = Package::where('status', 0)->get();
+            $data['error'] = false;
+            $data['data'] = $packages;
+
+
+        } else {
+            $data['error'] = false;
+            $data['message'] = "unauthorize user..!";
+        }
+
+        return response()->json($data, $this->successStatus);
+
+    }
 
     // Check Header
     public function checkUser($key)
